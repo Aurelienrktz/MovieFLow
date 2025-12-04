@@ -1,5 +1,5 @@
 "use client";
-const imgBase_Url = "https://image.tmdb.org/t/p/original/";
+const imgBase_Url = "https://image.tmdb.org/t/p/w300/";
 
 import {
   motion,
@@ -10,7 +10,7 @@ import {
 } from "motion/react";
 import { useRef, useEffect } from "react";
 
-export default function Similar({ similar, setMovie }) {
+export default function Similar({ similar, setMovie, addToList }) {
   const ref = useRef(null);
   const { scrollXProgress } = useScroll({ container: ref });
   const maskImage = useScrollOverflowMask(scrollXProgress);
@@ -37,31 +37,33 @@ export default function Similar({ similar, setMovie }) {
     >
       <h1 className="before text-center md:text-start">Similars</h1>
       <h1 className="mt-4 text-blue-600 md:text-6xl">
-        {similar.length == 0 && "No movie similar"}
+        {similar.length == 0 && "Pas de film Similaire"}
       </h1>
-      <svg
-        id="progress"
-        width="80"
-        height="80"
-        viewBox="0 0 100 100"
-        className="rotate-[-90deg] mt-8 md:mt-10"
-      >
-        <circle
-          cx="50"
-          cy="50"
-          r="30"
-          pathLength="1"
-          className="stroke-gray-700 fill-none stroke-[10%]"
-        />
-        <motion.circle
-          cx="50"
-          cy="50"
-          r="30"
-          pathLength="1"
-          className="stroke-blue-600 fill-none stroke-[10%]"
-          style={{ pathLength: scrollXProgress }}
-        />
-      </svg>
+      {similar.length !== 0 && (
+        <svg
+          id="progress"
+          width="80"
+          height="80"
+          viewBox="0 0 100 100"
+          className="rotate-[-90deg] mt-8 md:mt-10"
+        >
+          <circle
+            cx="50"
+            cy="50"
+            r="30"
+            pathLength="1"
+            className="stroke-gray-700 fill-none stroke-[10%]"
+          />
+          <motion.circle
+            cx="50"
+            cy="50"
+            r="30"
+            pathLength="1"
+            className="stroke-blue-600 fill-none stroke-[10%]"
+            style={{ pathLength: scrollXProgress }}
+          />
+        </svg>
+      )}
       <motion.ul
         ref={ref}
         className="flex overflow-x-auto snap-x snap-mandatory gap-6 py-5 px-2 scrollbar-thin scrollbar-track-gray-300 scrollbar-custom "
@@ -79,9 +81,10 @@ export default function Similar({ similar, setMovie }) {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-lg">
               <img
-                src={`${imgBase_Url}${value.backdrop_path}`}
+                src={`${imgBase_Url}${value.poster_path}`}
                 alt={value.title}
                 className="object-cover w-full h-70 rounded-2xl"
+                loading="lazy"
               />
 
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end gap-2 p-2 rounded-2xl">
@@ -115,7 +118,12 @@ export default function Similar({ similar, setMovie }) {
                   </svg>
                 </button>
 
-                <button className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer">
+                <button
+                  onClick={() => {
+                    addToList(value);
+                  }}
+                  className="z-50 bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

@@ -1,8 +1,8 @@
 import React from "react";
 import Filterbtn from "./filterbtn";
-const imgBase_Url = "https://image.tmdb.org/t/p/original/";
+const imgBase_Url = "https://image.tmdb.org/t/p/w300/";
 
-const Filter = ({ filter, setMovie, title, filterMovie, idGenre }) => {
+const Filter = ({ filter, setMovie, addToList, filterMovie, idGenre }) => {
   return (
     <div className=" text-white text-2xl mt-10 md:text-4xl px-5 md:px-10 md:mt-15 ">
       <div className="mt-8 md:mt-10 flex md:flex-wrap gap-x-10 gap-y-5 md:gap-x-20 md:gap-y-5 overflow-x-scroll scrollbar-custom md:overflow-auto ">
@@ -57,9 +57,10 @@ const Filter = ({ filter, setMovie, title, filterMovie, idGenre }) => {
             >
               <div className="relative rounded-2xl overflow-hidden shadow-lg">
                 <img
-                  src={`${imgBase_Url}${value.backdrop_path}`}
+                  src={`${imgBase_Url}${value.poster_path}`}
                   alt={value.title}
                   className="object-cover w-full h-70 rounded-2xl"
+                  loading="lazy"
                 />
 
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end gap-2 p-2 rounded-2xl">
@@ -92,7 +93,12 @@ const Filter = ({ filter, setMovie, title, filterMovie, idGenre }) => {
                     </svg>
                   </button>
 
-                  <button className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer">
+                  <button
+                    onClick={() => {
+                      addToList(value);
+                    }}
+                    className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

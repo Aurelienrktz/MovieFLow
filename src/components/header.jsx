@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 const imgBase_Url = "https://image.tmdb.org/t/p/original/";
 
-const Header = ({ movie }) => {
+const Header = ({ movie, setLoading, addToList }) => {
   const [more, setMore] = useState(false);
 
   return (
@@ -9,11 +9,10 @@ const Header = ({ movie }) => {
       <img
         src={`${imgBase_Url}${movie.backdrop_path}`}
         alt={movie.title}
-        className="w-full h-full object-cover md:object-contain mx-auto z-0"
+        className="object-cover  w-full h-full md:object-contain mx-auto z-0"
+        onLoad={() => setLoading(false)}
       />
-
       <div className="absolute inset-0 w-full h-full bg-[linear-gradient(to_top,rgba(20,20,20,0.8)_50%,rgba(20,20,20,0.6)_90%,rgba(20,20,20,0.5)_100%)] z-0 pointer-events-none"></div>
-
       <div className="absolute bottom-5 left-5 md:left-10 md:w-1/2 max-h-[90%] md:max-w-full flex flex-col gap-4 z-10 text-white">
         <h1 className="font-bold text-3xl md:text-4xl lg:text-5xl ">
           {movie.title}
@@ -43,12 +42,16 @@ const Header = ({ movie }) => {
           </h3>
         </section>
 
-        <p className="text-sm md:text-base lg:text-lg max-h-10/12 w-full ">
-          {movie.overview}
-        </p>
+        {movie.overview != "" ? (
+          <p className="text-sm md:text-base lg:text-lg max-h-10/12 w-full line-clamp-9">
+            {movie.overview}
+          </p>
+        ) : (
+          <p className="text-3xl text-red-500">Description Indisponible</p>
+        )}
 
         <section className="flex gap-4 flex-wrap">
-          <button
+          {/* <button
             className="bg-blue-700 hover:bg-blue-800 transition text-white p-3 rounded-md flex items-center gap-2 cursor-pointer"
             onClick={() => setMore(!more)}
           >
@@ -67,8 +70,13 @@ const Header = ({ movie }) => {
               />
             </svg>
             Info
-          </button>
-          <button className="bg-gray-600 hover:bg-gray-700 transition text-white p-3 rounded-md flex items-center gap-2 cursor-pointer">
+          </button> */}
+          <button
+            onClick={() => {
+              addToList(movie);
+            }}
+            className="bg-gray-600 hover:bg-gray-700 transition text-white p-3 rounded-md flex items-center gap-2 cursor-pointer"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

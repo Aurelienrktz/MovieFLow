@@ -1,171 +1,90 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+// Assurez-vous d'importer l'instance 'auth' de Firebase Authentication
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/firebase"; // <-- NOUVEL IMPORT NÉCESSAIRE
+
 import "./App.css";
-import Navbar from "./components/navbar";
-import Header from "./components/header";
-import Similar from "./components/similar";
-import Recomandation from "./components/recomandation";
-import Filter from "./components/filter";
-import ScrollLinked from "./components/scroll";
+import MainLayout from "./components/MainLayout";
+import SignUp from "./components/signUp";
+import Login from "./components/login";
 
 function App() {
-  const [movie, setMovie] = useState();
-  const [similar, setSimilar] = useState([]);
-  const [recomendation, setRecomendation] = useState([]);
-  const [filter, setFilter] = useState([]);
-  const [idGenre, setIdGenre] = useState(28);
-  const [dark, setDark] = useState(false);
-  const[loading,setLoading]=useState(true);
+  // 1. État pour l'authentification (Connecté ou Déconnecté)
+  const [isAuthentificated, setIsAuthentificated] = useState(false);
 
-  // API
-  const Key = "64a65a77797fb0b684c675f04f2ad0cf";
-  const base_Url = "https://api.themoviedb.org/3/movie";
+  // 2. État pour le chargement (Initialisation de la session Firebase)
+  const [loading, setLoading] = useState(true);
 
-  async function fetchMovie() {
-    const index = parseInt(Math.random() * 10);
-    try {
-      // 
-      setLoading(true)
-      // 
-      const response = await axios.get(`${base_Url}/upcoming`, {
-        params: {
-          api_key: Key,
-          page: 1,
-          language: "fr",
-        },
-      });
-      setMovie(response.data.results[index]);
-    } catch (err) {
-      console.log(err.message);
-    } finally{
-      setLoading(false)
-    }
-  }
-
-  async function fetchSimilarAndRecommandation(movie_id) {
-    try {
-      const [similarRes, recommendRes] = await Promise.all([
-        axios.get(`${base_Url}/${movie_id}/similar`, {
-          params: { api_key: Key, page: 1, language: "fr" },
-        }),
-        axios.get(`${base_Url}/${movie_id}/recommendations`, {
-          params: { api_key: Key, page: 1, language: "fr" },
-        }),
-      ]);
-      setSimilar(similarRes.data.results);
-      setRecomendation(recommendRes.data.results);
-    } catch (err) {
-      console.log(err.message);
-    }
-  }
-
-  async function filterMovie(Idgenre) {
-    setIdGenre(Idgenre);
-    try {
-      setLoading(true)
-      const response = await axios.get(
-        `https://api.themoviedb.org/3/discover/movie?with_genres=${Idgenre}&sort_by=popularity.desc`,
-        {
-          params: {
-            api_key: Key,
-            page: 1,
-            language: "fr",
-          },
-        }
-      );
-      setFilter(response.data.results);
-    } catch (err) {
-      console.log(err.message);
-    } finally {
+  // 💡 NOUVEAU : Gère l'état de la session au démarrage
+  useEffect(() => {
+    // onAuthStateChanged est appelé après que Firebase vérifie le token local.
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Si un utilisateur est trouvé (il est connecté)
+      if (user) {
+        setIsAuthentificated(true);
+      } else {
+        setIsAuthentificated(false);
+      }
+      // Indique que la vérification de la session est terminée
       setLoading(false);
+    });
+
+    // Nettoyage: arrête l'écoute lorsque le composant se démonte
+    return () => unsubscribe();
+  }, []);
+
+  const PrivateRoute = ({ children }) => {
+    // 🛑 Si la session est en cours de vérification, ne rien afficher (ou un spinner)
+    if (loading) {
+      return (
+        <div className="loading-screen bg-neutral-800 w-full h-full text-center text-blue-500">
+          Chargement de la session...
+        </div>
+      );
     }
+
+    // Si la vérification est terminée, naviguer en fonction de l'état
+    return isAuthentificated ? children : <Navigate to="/login" replace />;
+  };
+
+  // 🛑 Si la vérification est en cours, ne pas rendre le routeur principal
+  if (loading) {
+    return (
+      <div className="float2 loading-screen bg-neutral-800 w-full h-screen flex items-center justify-center text-center text-blue-500">
+        Chargement ...
+      </div>
+    );
   }
 
-  useEffect(() => {
-    fetchMovie();
-    filterMovie(idGenre);
-  }, []);
-  useEffect(() => {
-    if (!movie) return;
-    fetchSimilarAndRecommandation(movie.id);
-  }, [movie]);
+  // ----------------------------------------------------
 
   return (
-    <div className="bg-dark">
-      <Navbar />
-      {/* {movie && <ScrollLinked recomendation={similar} setMovie={setMovie} />} */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center h-[90vh]">
-          <svg
-            className="animate-spin h-12 w-12 text-gray-500"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v8H4z"
-            ></path>
-          </svg>
-          <p className="mt-2 text-blue-600">Chargement des films...</p>
-        </div>
-      ) : (
-        <Header movie={movie} />
-      )}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center h-[90vh]">
-          <svg
-            className="animate-spin h-12 w-12 text-gray-500"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v8H4z"
-            ></path>
-          </svg>
-          <p className="mt-2 text-blue-600">Chargement des films...</p>
-        </div>
-      ) : (
-        <Similar similar={similar} setMovie={setMovie} />
-      )}
-      {/* {movie && <Similar similar={similar} setMovie={setMovie} />} */}
-      {movie && (
-        <Filter
-          filter={filter}
-          setMovie={setMovie}
-          title={"Filter"}
-          filterMovie={filterMovie}
-          idGenre={idGenre}
-        />
-      )}
-      {movie && (
-        <Recomandation
-          recomendation={recomendation}
-          setMovie={setMovie}
-          title={"Recommendations"}
-        />
-      )}
-    </div>
+    <Router>
+      <div className="bg-dark">
+        <Routes>
+          <Route path="/signUp" element={<SignUp />} />
+          <Route
+            path="/login"
+            // Le composant Login met à jour l'état lors d'une connexion réussie
+            element={<Login setIsAuthentificated={setIsAuthentificated} />}
+          />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <MainLayout />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

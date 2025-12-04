@@ -1,12 +1,18 @@
 import React from "react";
-const imgBase_Url = "https://image.tmdb.org/t/p/original/";
+const imgBase_Url = "https://image.tmdb.org/t/p/w500/";
 
-const Recomandation = ({ recomendation, setMovie }) => {
+const Recomandation = ({
+  recomendation,
+  setMovie,
+  fetchSerie,
+  fetchSerieSimilar,
+  addToList,
+}) => {
   return (
-    <div className=" text-white text-2xl mt-10 px-5 md:text-4xl md:px-10 md:mt-15">
-      <h1 className="before ">Recommendation</h1>
+    <div className=" text-white text-2xl my-10 px-5 md:text-4xl md:px-10 md:my-15">
+      <h1 className="before ">Serie</h1>
       <h1 className="mt-4 text-blue-600 md:text-6xl">
-        {recomendation.length == 0 && "No recommendation"}
+        {recomendation.length == 0 && "Pas de serie"}
       </h1>
       <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 py-5 px-2 scrollbar-thin scrollbar-track-gray-300 scrollbar-custom">
         {recomendation.map((value, index) => {
@@ -15,25 +21,26 @@ const Recomandation = ({ recomendation, setMovie }) => {
               key={index}
               className="relative w-[200px] flex-shrink-0 cursor-pointer group translate-y-1.5 transition-all duration-400"
               onClick={() => {
-                setMovie(value);
-                const section = document.getElementById("navbar");
-                section?.scrollIntoView({ behavior: "smooth" });
+                setMovie();
+                fetchSerie(value.id);
+                fetchSerieSimilar(value.id);
               }}
             >
               <div className="relative rounded-2xl overflow-hidden shadow-lg">
                 <img
-                  src={`${imgBase_Url}${value.backdrop_path}`}
+                  src={`${imgBase_Url}${value.poster_path}`}
                   alt={value.title}
                   className="object-cover w-full h-70 rounded-2xl"
+                  loading="lazy"
                 />
 
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end gap-2 p-2 rounded-2xl">
                   <button
                     className="bg-blue-700 hover:bg-blue-800 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
                     onClick={() => {
-                      setMovie(value);
-                      const section = document.getElementById("navbar");
-                      section?.scrollIntoView({ behavior: "smooth" });
+                      setMovie();
+                      fetchSerie(value.id);
+                      fetchSerieSimilar(value.id);
                     }}
                   >
                     <svg
@@ -57,7 +64,12 @@ const Recomandation = ({ recomendation, setMovie }) => {
                     </svg>
                   </button>
 
-                  <button className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer">
+                  <button
+                    onClick={() => {
+                      addToList(value);
+                    }}
+                    className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
