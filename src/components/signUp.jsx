@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 
@@ -8,6 +8,7 @@ const SignUp = () => {
   const [mdp, setMdp] = useState("");
   const [mdpVerification, setMdpVerification] = useState("");
   const [error, seterror] = useState("");
+  const navigate = useNavigate();
 
   async function handleSignUp() {
     if (!email || !mdp || !mdpVerification) {
@@ -43,6 +44,7 @@ const SignUp = () => {
       setMdpVerification("");
       alert("Inscription reussite");
       seterror(""); // Réinitialise les erreurs si succès
+      navigate("/login");
       return userCredential;
     } catch (err) {
       // Gestion des erreurs Firebase
