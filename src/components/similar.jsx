@@ -1,5 +1,5 @@
 "use client";
-const imgBase_Url = "https://image.tmdb.org/t/p/w300/";
+const imgBase_Url = "https://image.tmdb.org/t/p/original/";
 
 import {
   motion,

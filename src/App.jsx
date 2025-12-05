@@ -13,6 +13,7 @@ import "./App.css";
 import MainLayout from "./components/MainLayout";
 import SignUp from "./components/signUp";
 import Login from "./components/login";
+import NotFoundPage from "./components/notFoundPage";
 
 function App() {
   // 1. État pour l'authentification (Connecté ou Déconnecté)

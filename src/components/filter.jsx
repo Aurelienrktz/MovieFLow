@@ -1,6 +1,6 @@
 import React from "react";
 import Filterbtn from "./filterbtn";
-const imgBase_Url = "https://image.tmdb.org/t/p/w300/";
+const imgBase_Url = "https://image.tmdb.org/t/p/original/";
 
 const Filter = ({ filter, setMovie, addToList, filterMovie, idGenre }) => {
   return (

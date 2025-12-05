@@ -33,7 +33,7 @@ const MainLayout = () => {
 
   // Firebase
   const store = getDatabase();
-  const userId = auth.currentUser.uid;
+  const userId = auth.currentUser ? auth.currentUser.uid : null;
 
   // API
   const Key = "64a65a77797fb0b684c675f04f2ad0cf";
@@ -164,6 +164,7 @@ const MainLayout = () => {
   }
 
   useEffect(() => {
+    if (!userId) return null;
     fetchMovie();
     filterMovie(idGenre);
     fetchSeriePopular();
