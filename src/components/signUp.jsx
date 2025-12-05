@@ -9,8 +9,14 @@ const SignUp = () => {
   const [mdpVerification, setMdpVerification] = useState("");
   const [error, seterror] = useState("");
   const navigate = useNavigate();
+  const [checked, setChecked] = useState(false);
 
   async function handleSignUp() {
+    setChecked(true);
+    setTimeout(() => {
+      setChecked(false);
+    }, 2000);
+
     if (!email || !mdp || !mdpVerification) {
       seterror("Tous les champs sont requis");
       return;
@@ -137,7 +143,7 @@ const SignUp = () => {
           className="w-full bg-green-600 hover:bg-green-700 transition py-3 rounded-lg font-semibold cursor-pointer"
           onClick={handleSignUp}
         >
-          Inscription
+          {checked ? ". . ." : "Inscription"}
         </button>
         <p className="font-light text-center mt-4">
           Vous avez déjà un compte ?{" "}

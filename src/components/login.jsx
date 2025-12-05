@@ -7,11 +7,16 @@ const Login = ({ setIsAuthentificated }) => {
   const [email, setEmail] = useState("");
   const [mdp, setMdp] = useState("");
   const [error, setError] = useState("");
+  const [checked, setChecked] = useState(false);
 
   //redirection
   const navigate = useNavigate();
 
   async function handleLogin() {
+    setChecked(true);
+    setTimeout(() => {
+      setChecked(false);
+    }, 2000);
     if (!email || !mdp) {
       setError("Tous les champs sont requis");
       return;
@@ -112,7 +117,7 @@ const Login = ({ setIsAuthentificated }) => {
           className="w-full bg-blue-600 hover:bg-blue-700 transition py-3 rounded-lg font-semibold cursor-pointer"
           onClick={handleLogin}
         >
-          Connexion
+          {checked ? ". . ." : "Connexion"}
         </button>
         <p className="font-light text-center mt-4">
           Pas encore de compte ?{" "}

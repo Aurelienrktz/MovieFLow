@@ -8,12 +8,13 @@ import {
   useMotionValue,
   animate,
 } from "motion/react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 export default function Similar({ similar, setMovie, addToList }) {
   const ref = useRef(null);
   const { scrollXProgress } = useScroll({ container: ref });
   const maskImage = useScrollOverflowMask(scrollXProgress);
+  const [activeCard, setActiveCard] = useState(null);
 
   // ✅ Gère le scroll horizontal avec pavé tactile / molette
   useEffect(() => {
@@ -72,14 +73,12 @@ export default function Similar({ similar, setMovie, addToList }) {
         {similar.map((value, index) => (
           <div
             key={index}
-            className="relative w-[200px] flex-shrink-0 cursor-pointer group hover:-translate-y-1.5 transition-all duration-400"
+            className="relative group w-[200px] flex-shrink-0 group cursor-pointer "
             onClick={() => {
-              setMovie(value);
-              const section = document.getElementById("navbar");
-              section?.scrollIntoView({ behavior: "smooth" });
+              setActiveCard(activeCard === index ? null : index);
             }}
           >
-            <div className="relative rounded-2xl overflow-hidden shadow-lg">
+            <div className="relative rounded-2xl overflow-hidden shadow-lg group-hover:-translate-y-1.5 transition-all duration-300">
               <img
                 src={`${imgBase_Url}${value.poster_path}`}
                 alt={value.title}
@@ -87,11 +86,18 @@ export default function Similar({ similar, setMovie, addToList }) {
                 loading="lazy"
               />
 
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end gap-2 p-2 rounded-2xl">
+              <div
+                className={`absolute inset-0 bg-black/60 flex items-start justify-end gap-2 p-2 rounded-2xl transition-all duration-300 group-hover:opacity-100
+              ${
+                activeCard === index
+                  ? "opacity-100"
+                  : "opacity-0 pointer-events-none"
+              }
+            `}
+              >
                 <button
-                  className="bg-blue-700 hover:bg-blue-800 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  className="bg-blue-700 hover:bg-blue-800 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer z-20"
+                  onClick={() => {
                     setMovie(value);
                     const section = document.getElementById("navbar");
                     section?.scrollIntoView({ behavior: "smooth" });
@@ -122,7 +128,7 @@ export default function Similar({ similar, setMovie, addToList }) {
                   onClick={() => {
                     addToList(value);
                   }}
-                  className="z-50 bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                  className="z-20 bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -142,9 +148,7 @@ export default function Similar({ similar, setMovie, addToList }) {
               </div>
             </div>
 
-            <h1 className="text-center text-xl my-4 px-2 break-words whitespace-normal text-white">
-              {value.title}
-            </h1>
+            <h1 className="text-center text-white mt-2">{value.title}</h1>
           </div>
         ))}
       </motion.ul>

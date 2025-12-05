@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 const imgBase_Url = "https://image.tmdb.org/t/p/w500/";
 
 const Recomandation = ({
@@ -8,6 +9,8 @@ const Recomandation = ({
   fetchSerieSimilar,
   addToList,
 }) => {
+  const [activeCard, setActiveCard] = useState(null);
+
   return (
     <div className=" text-white text-2xl my-10 px-5 md:text-4xl md:px-10 md:my-15">
       <h1 className="before ">Serie</h1>
@@ -19,14 +22,15 @@ const Recomandation = ({
           return (
             <div
               key={index}
-              className="relative w-[200px] flex-shrink-0 cursor-pointer group translate-y-1.5 transition-all duration-400"
+              className="relative w-[200px] flex-shrink-0 cursor-pointer group"
               onClick={() => {
-                setMovie();
-                fetchSerie(value.id);
-                fetchSerieSimilar(value.id);
+                setActiveCard(activeCard === index ? null : index);
               }}
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-lg">
+              <div
+                className="relative rounded-2xl overflow-hidden shadow-lg 
+                      group-hover:-translate-y-1.5 transition-all duration-300"
+              >
                 <img
                   src={`${imgBase_Url}${value.poster_path}`}
                   alt={value.title}
@@ -34,9 +38,18 @@ const Recomandation = ({
                   loading="lazy"
                 />
 
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end gap-2 p-2 rounded-2xl">
+                <div
+                  className={`absolute inset-0 bg-black/60 flex items-start justify-end gap-2 p-2 rounded-2xl transition-all duration-300 group-hover:opacity-100
+              ${
+                activeCard === index
+                  ? "opacity-100"
+                  : "opacity-0 pointer-events-none"
+              }
+            `}
+                >
                   <button
-                    className="bg-blue-700 hover:bg-blue-800 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                    className="bg-blue-700 hover:bg-blue-800 transition text-white p-2 rounded-md 
+                       flex items-center justify-center cursor-pointer z-20"
                     onClick={() => {
                       setMovie();
                       fetchSerie(value.id);
@@ -68,7 +81,8 @@ const Recomandation = ({
                     onClick={() => {
                       addToList(value);
                     }}
-                    className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                    className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md 
+                       flex items-center justify-center cursor-pointer z-20"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

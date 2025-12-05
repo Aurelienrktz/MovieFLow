@@ -15,6 +15,7 @@ import {
   onValue,
   off,
   remove,
+  child,
 } from "firebase/database";
 import { auth } from "../firebase/firebase";
 // import { motion } from "motion/dist/react";
@@ -132,6 +133,7 @@ const MainLayout = () => {
     const ListeRef = ref(store, `users/${userId}/listeFilm`);
     try {
       await push(ListeRef, movie);
+      alert(`" ${movie.titre} " ajouté dans la Liste.`);
     } catch (err) {
       console.log(err);
     }
@@ -154,7 +156,7 @@ const MainLayout = () => {
     try {
       // 3. Utilisation de la fonction remove()
       await remove(filmRef);
-      console.log(`Film avec l'ID ${filmId} supprimé avec succès.`);
+      alert(`Suppression effectué`);
 
       // Comme vous utilisez onValue() dans votre useEffect, l'affichage
       // dans le composant se mettra à jour automatiquement !

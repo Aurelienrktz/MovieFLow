@@ -1,8 +1,10 @@
 import React from "react";
+import { useState } from "react";
 import Filterbtn from "./filterbtn";
 const imgBase_Url = "https://image.tmdb.org/t/p/original/";
 
 const Filter = ({ filter, setMovie, addToList, filterMovie, idGenre }) => {
+  const [activeCard, setActiveCard] = useState(null);
   return (
     <div className=" text-white text-2xl mt-10 md:text-4xl px-5 md:px-10 md:mt-15 ">
       <div className="mt-8 md:mt-10 flex md:flex-wrap gap-x-10 gap-y-5 md:gap-x-20 md:gap-y-5 overflow-x-scroll scrollbar-custom md:overflow-auto ">
@@ -50,9 +52,7 @@ const Filter = ({ filter, setMovie, addToList, filterMovie, idGenre }) => {
               key={index}
               className="relative mx-auto w-10/12 md:w-[200px] flex-shrink-0 cursor-pointer group hover:-translate-y-1.5 transition-all duration-400"
               onClick={() => {
-                setMovie(value);
-                const section = document.getElementById("navbar");
-                section?.scrollIntoView({ behavior: "smooth" });
+                setActiveCard(activeCard === index ? null : index);
               }}
             >
               <div className="relative rounded-2xl overflow-hidden shadow-lg">
@@ -63,9 +63,17 @@ const Filter = ({ filter, setMovie, addToList, filterMovie, idGenre }) => {
                   loading="lazy"
                 />
 
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end gap-2 p-2 rounded-2xl">
+                <div
+                  className={`absolute inset-0 bg-black/60 flex items-start justify-end gap-2 p-2 rounded-2xl transition-all duration-300 group-hover:opacity-100
+              ${
+                activeCard === index
+                  ? "opacity-100"
+                  : "opacity-0 pointer-events-none"
+              }
+            `}
+                >
                   <button
-                    className="bg-blue-700 hover:bg-blue-800 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                    className="z-20 bg-blue-700 hover:bg-blue-800 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
                     onClick={() => {
                       setMovie(value);
                       const section = document.getElementById("navbar");
@@ -97,7 +105,7 @@ const Filter = ({ filter, setMovie, addToList, filterMovie, idGenre }) => {
                     onClick={() => {
                       addToList(value);
                     }}
-                    className="bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
+                    className="z-20 bg-gray-600 hover:bg-gray-700 transition text-white p-2 rounded-md flex items-center justify-center cursor-pointer"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
